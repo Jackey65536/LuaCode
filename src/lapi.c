@@ -821,7 +821,9 @@ static void f_call (lua_State *L, void *ud) {
 }
 
 
-
+/*
+ 将字节码放到虚拟机中执行
+ */
 LUA_API int lua_pcall (lua_State *L, int nargs, int nresults, int errfunc) {
   struct CallS c;
   int status;
@@ -836,6 +838,7 @@ LUA_API int lua_pcall (lua_State *L, int nargs, int nresults, int errfunc) {
     api_checkvalidindex(L, o);
     func = savestack(L, o);
   }
+  /* 获取需要调用的函数指针 */
   c.func = L->top - (nargs+1);  /* function to be called */
   c.nresults = nresults;
   status = luaD_pcall(L, f_call, &c, savestack(L, c.func), func);

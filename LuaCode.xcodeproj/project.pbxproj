@@ -55,7 +55,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		56C4D0AE237181EB0085DF72 /* LuaCodeDump */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LuaCodeDump; sourceTree = BUILT_PRODUCTS_DIR; };
+		56C4D0AE237181EB0085DF72 /* LuaCode */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LuaCode; sourceTree = BUILT_PRODUCTS_DIR; };
 		56F134ED2371824D007AB247 /* lauxlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lauxlib.c; sourceTree = "<group>"; };
 		56F134EE2371824D007AB247 /* lmem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lmem.h; sourceTree = "<group>"; };
 		56F134EF2371824D007AB247 /* llimits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = llimits.h; sourceTree = "<group>"; };
@@ -136,7 +136,7 @@
 		56C4D0AF237181EB0085DF72 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				56C4D0AE237181EB0085DF72 /* LuaCodeDump */,
+				56C4D0AE237181EB0085DF72 /* LuaCode */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -207,9 +207,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		56C4D0AD237181EB0085DF72 /* LuaCodeDump */ = {
+		56C4D0AD237181EB0085DF72 /* LuaCode */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 56C4D0B5237181EB0085DF72 /* Build configuration list for PBXNativeTarget "LuaCodeDump" */;
+			buildConfigurationList = 56C4D0B5237181EB0085DF72 /* Build configuration list for PBXNativeTarget "LuaCode" */;
 			buildPhases = (
 				56C4D0AA237181EB0085DF72 /* Sources */,
 				56C4D0AB237181EB0085DF72 /* Frameworks */,
@@ -219,9 +219,9 @@
 			);
 			dependencies = (
 			);
-			name = LuaCodeDump;
+			name = LuaCode;
 			productName = LuaCodeDump;
-			productReference = 56C4D0AE237181EB0085DF72 /* LuaCodeDump */;
+			productReference = 56C4D0AE237181EB0085DF72 /* LuaCode */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -238,7 +238,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 56C4D0A9237181EB0085DF72 /* Build configuration list for PBXProject "LuaCodeDump" */;
+			buildConfigurationList = 56C4D0A9237181EB0085DF72 /* Build configuration list for PBXProject "LuaCode" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -250,7 +250,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				56C4D0AD237181EB0085DF72 /* LuaCodeDump */,
+				56C4D0AD237181EB0085DF72 /* LuaCode */,
 			);
 		};
 /* End PBXProject section */
@@ -429,7 +429,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		56C4D0A9237181EB0085DF72 /* Build configuration list for PBXProject "LuaCodeDump" */ = {
+		56C4D0A9237181EB0085DF72 /* Build configuration list for PBXProject "LuaCode" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				56C4D0B3237181EB0085DF72 /* Debug */,
@@ -438,7 +438,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		56C4D0B5237181EB0085DF72 /* Build configuration list for PBXNativeTarget "LuaCodeDump" */ = {
+		56C4D0B5237181EB0085DF72 /* Build configuration list for PBXNativeTarget "LuaCode" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				56C4D0B6237181EB0085DF72 /* Debug */,

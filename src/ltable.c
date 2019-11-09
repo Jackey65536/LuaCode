@@ -88,7 +88,7 @@ static Node *hashnum (const Table *t, lua_Number n) {
   unsigned int a[numints];
   int i;
   if (luai_numeq(n, 0))  /* avoid problems with -0 */
-    return gnode(t, 0);
+    return gnode(t, 0); // &t->node[0]
   memcpy(a, &n, sizeof(a));
   for (i = 1; i < numints; i++) a[0] += a[i];
   return hashmod(t, a[0]);
@@ -374,7 +374,15 @@ void luaH_resizearray (lua_State *L, Table *t, int nasize) {
   resize(L, t, nasize, nsize);
 }
 
-// 对table进行重新划分hash和数组部分的大小
+/*
+  对table进行重新划分hash和数组部分的大小
+  1、分配一个位图 nums ，将其中的所有位置0。这个位图的意义在于：nums数组中第i个元素存放的是key在2^(i-1)和2^i之间的元素数量
+  2、遍历Lua表中的数组部分，计算其中的元素数量，更新对应的nums数组中的元素量(numusearray 函数)
+  3、遍历Lua表中的散列桶部分，因为其中也可能存放了正整数，需要根据这里的正整数数量更新对应的nums数组元素数量(numusehash 函数)
+  4、此时nums数组已经有了当前这个Table中所有正整数的分配统计，逐个遍历nums数组，获得其范围区间内所包含的整数数量大于50%的
+  最大索引，作为重新散列之后的数组大小，超过这个范围的正整数，就分配到散列桶部分了(computesizes 函数)
+  5、根据上面计算得到的调整后的数组和散列桶带下调整表(resize 函数)
+*/
 static void rehash (lua_State *L, Table *t, const TValue *ek) {
   int nasize, na;
   // nums中存放的是key在2^(i-1), 2^i之间的元素数量
