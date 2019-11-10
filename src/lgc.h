@@ -23,12 +23,14 @@
 
 /*
 ** some userful bit tricks
+** ~：按位取反
+** ^：按位异或
 */
 #define resetbits(x,m)	((x) &= cast(lu_byte, ~(m)))
 #define setbits(x,m)	((x) |= (m))
 #define testbits(x,m)	((x) & (m))
-#define bitmask(b)	(1<<(b))
-#define bit2mask(b1,b2)	(bitmask(b1) | bitmask(b2))
+#define bitmask(b)	(1<<(b)) /* 2^b */
+#define bit2mask(b1,b2)	(bitmask(b1) | bitmask(b2)) /* 2^b1 | 2^b2 */
 #define l_setbit(x,b)	setbits(x, bitmask(b))
 #define resetbit(x,b)	resetbits(x, bitmask(b))
 #define testbit(x,b)	testbits(x, bitmask(b))

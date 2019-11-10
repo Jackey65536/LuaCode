@@ -248,13 +248,14 @@ typedef union Udata {
 typedef struct Proto {
   CommonHeader;
   TValue *k;  /* constants used by the function */
-  // 存放函数体的opcode
+  // 函数体对应的虚拟机指令
   Instruction *code;
   // 在这个函数中定义的函数
   struct Proto **p;  /* functions defined inside the function */
   int *lineinfo;  /* map from opcodes to source lines */
   // 存放局部变量的数组
   struct LocVar *locvars;  /* information about local variables */
+  /* 外部局部变量名称 */
   TString **upvalues;  /* upvalue names */
   TString  *source;
   int sizeupvalues;
@@ -278,7 +279,7 @@ typedef struct Proto {
 #define VARARG_ISVARARG		2
 #define VARARG_NEEDSARG		4
 
-// 存放局部变量的结构体
+/* 局部变量 */
 typedef struct LocVar {
   TString *varname;
   int startpc;  /* first point where variable is active */
@@ -287,10 +288,7 @@ typedef struct LocVar {
 
 
 
-/*
-** Upvalues
-*/
-
+/* 外部局部变量 */
 typedef struct UpVal {
   CommonHeader;
   TValue *v;  /* points to stack or to its own value */
@@ -305,11 +303,6 @@ typedef struct UpVal {
   } u;
 } UpVal;
 
-
-/*
-** Closures
-*/
-
 #define ClosureHeader \
 	CommonHeader; lu_byte isC; lu_byte nupvalues; GCObject *gclist; \
 	struct Table *env
@@ -320,14 +313,13 @@ typedef struct CClosure {
   TValue upvalue[1];
 } CClosure;
 
-
 typedef struct LClosure {
   ClosureHeader;
   struct Proto *p;
   UpVal *upvals[1];
 } LClosure;
 
-
+/* 闭包 */
 typedef union Closure {
   CClosure c;
   LClosure l;

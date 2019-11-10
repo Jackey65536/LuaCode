@@ -49,6 +49,9 @@
 
 typedef struct lua_State lua_State;
 
+/*
+ ** lua_CFunction pf; => int (*pf) (lua_State *L)
+ */
 typedef int (*lua_CFunction) (lua_State *L);
 
 
