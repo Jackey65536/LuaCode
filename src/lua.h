@@ -23,7 +23,7 @@
 #define LUA_AUTHORS 	"R. Ierusalimschy, L. H. de Figueiredo & W. Celes"
 
 
-/* mark for precompiled code (`<esc>Lua') */
+/* mark for precompiled code (`<esc>Lua') \033是八进制ASCII码 */
 #define	LUA_SIGNATURE	"\033Lua"
 
 /* option for multiple returns in `lua_pcall' and `lua_call' */
@@ -352,14 +352,34 @@ LUA_API int lua_gethookcount (lua_State *L);
 
 struct lua_Debug {
   int event;
+  /* 函数的合理名称 */
   const char *name;	/* (n) */
+  /* 上一个字段代表的含义 */
   const char *namewhat;	/* (n) `global', `local', `field', `method' */
+  /*
+    标明函数类型
+    Lua：普通函数
+    C：C函数
+    main：Lua的主chunk
+   */
   const char *what;	/* (S) `Lua', `C', `main', `tail' */
+  /*
+   标明函数被定义的地方.
+   如果函数在一个字符串内被定义，source就是那个字符串。
+   如果函数在一个文件中定义，source是@加上文件名
+   */
   const char *source;	/* (S) */
+  /*
+   以数字n调用debug.getinfo(n)时，返回在n级栈的活动函数的信息数据。
+   比如，如果n=1，返回的是正在进行调用的那个函数的信息。（n=0表示 C函数getinfo本身）如果n比栈中活动函数的个数大的话，debug.getinfo返回nil。
+   当你使用数字n调用debug.getinfo查 询活动函数的信息的时候，返回的结果table中有一个额外的域：currentline，即在那个时刻函数所在的行号。
+   */
   int currentline;	/* (l) */
-  int nups;		/* (u) number of upvalues */
+  int nups;		/* (u) 函数的upvalues的个数 */
+  /* source中函数被定义之处的行号 */
   int linedefined;	/* (S) */
   int lastlinedefined;	/* (S) */
+  /* source的简短版本（最多60个字符），记录一些有用的错误信息 */
   char short_src[LUA_IDSIZE]; /* (S) */
   /* private part */
   int i_ci;  /* active function */
