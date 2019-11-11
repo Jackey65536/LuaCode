@@ -2,6 +2,7 @@
 ** $Id: lgc.h,v 2.15.1.1 2007/12/27 13:02:25 roberto Exp $
 ** Garbage Collector
 ** See Copyright Notice in lua.h
+** Lua采用一个简单的标记清除算法的GC系统
 */
 
 #ifndef lgc_h
@@ -13,12 +14,19 @@
 
 /*
 ** Possible states of the Garbage Collector
+** GC的五大阶段（状态），从小到大依次执行
 */
-#define GCSpause	0
+#define GCSpause	    0
 #define GCSpropagate	1
+/*
+ string在lua中是单独管理的，所以也需要单独清除。GCSsweepstring阶段干的就是这个事情。
+ stringtable以hash表形式管理所有的string。GCSsweepstring中，每个步骤（step）清理hash表的一列
+ */
 #define GCSsweepstring	2
-#define GCSsweep	3
-#define GCSfinalize	4
+/* 对所有未标记的其他GCObject做清理工作 */
+#define GCSsweep	    3
+/* 如果在前面的阶段发现了需要调用gc元方法的userdata对象，将在这个阶段逐个调用，由函数GCTM负责 */
+#define GCSfinalize	    4
 
 
 /*
@@ -41,6 +49,10 @@
 
 
 /*
+ lua认为每个GCObject都有一个颜色。一开始，所有节点都是白色的。新创建出来的节点也被默认设置为白色。
+ 在标记阶段，可见的节点，逐个被设置为黑色。有些节点比较复杂，它会关联别的节点。在没有处理完所有关联
+ 节点前，lua认为它是灰色的。
+ 节点的颜色被存储在GCObject的CommonHeader里，放在marked域中。为了节约内存，以位形式存放。
 ** Layout for bit use in `marked' field:
 ** bit 0 - object is white (type 0)
 ** bit 1 - object is white (type 1)
@@ -51,18 +63,30 @@
 ** bit 5 - object is fixed (should not be collected)
 ** bit 6 - object is "super" fixed (only the main thread)
 */
-
-
 #define WHITE0BIT	0
 #define WHITE1BIT	1
 #define BLACKBIT	2
+/*
+ 标记userdata。当userdata确认不被引用，则设置上这个标记。它不同于颜色标记。
+ 因为userdata由于gc元方法的存在，释放所占内存是需要延迟到gc元方法调用之后的。
+ 这个标记可以保证元方法不会被反复调用。
+ */
 #define FINALIZEDBIT	3
 // 弱key
 #define KEYWEAKBIT	3
 // 弱值
 #define VALUEWEAKBIT	4
-// 标记这个GC对象不可回收
+/*
+ 标记一个GCObject不可以在GC流程中被清除。
+ 为什么要有这种状态？关键在于lua本身会用到一个字符串，它们有可能不被任何地方引用，
+ 但在每次接触到这个字符串时，又不希望反复生成。那么，这些字符串就会被保护起来，
+ 设置上fFIXEDBIT
+ */
 #define FIXEDBIT	5
+/*
+ 标记主mainthread，也就是一切的起点。我们调用lua_newstate返回的那个结构。
+ 即使到lua_close的那一刻，这个结构也是不能随意清除的。
+ */
 #define SFIXEDBIT	6
 // 两种白色的或
 #define WHITEBITS	bit2mask(WHITE0BIT, WHITE1BIT)

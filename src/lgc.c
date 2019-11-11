@@ -564,7 +564,7 @@ static void markmt (global_State *g) {
 }
 
 
-/* mark root set */
+/* 标记主线程对象，标记主线程的全局表、注册表，以及为全局类型注册的元表 */
 static void markroot (lua_State *L) {
   global_State *g = G(L);
   // 首先置空这几个链表

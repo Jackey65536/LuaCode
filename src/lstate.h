@@ -99,6 +99,7 @@ typedef struct global_State {
   struct lua_State *mainthread;
   UpVal uvhead;  /* head of double-linked list of all open upvalues */
   struct Table *mt[NUM_TAGS];  /* metatables for basic types */
+  /* 以TString指针的方式记录了所有元方法的名字 */
   TString *tmname[TM_N];  /* array with tag-method names */
 } global_State;
 

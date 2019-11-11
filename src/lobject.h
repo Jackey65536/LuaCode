@@ -45,7 +45,7 @@ typedef union GCObject GCObject;
 **
 ** next: 指向下一个GC链表的成员
 ** tt: 标识数据的类型，即lua.h里的那些基础类型
-** marked: GC相关的标记位
+** marked: 用于标记清除的工作
 */
 #define CommonHeader	GCObject *next; lu_byte tt; lu_byte marked
 
@@ -83,10 +83,11 @@ typedef union {
 
 /*
   统一表示所有在Lua虚拟机中需要保存的数据类型，Lua中的任何数据都可以通过该结构体表示
+  Lua中以union + type的形式保存值
 */
 typedef struct lua_TValue {
   TValuefields;
-} TValue;
+} TValue;   /* 比Value多了一个T，即类型标识 */
 
 
 /* Macros to test type */
