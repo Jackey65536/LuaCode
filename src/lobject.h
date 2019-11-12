@@ -46,6 +46,12 @@ typedef union GCObject GCObject;
 ** next: 指向下一个GC链表的成员
 ** tt: 标识数据的类型，即lua.h里的那些基础类型
 ** marked: 用于标记清除的工作
+ 
+ 标记清除算法是一种简单的GC算法。每次GC过程，先以若干根节点开始，逐个把直接以及间接和他们相关的节点都做上标记。
+ 对于Lua，这个过程很容易实现。因为除了string外，其他所有GCObject都在同一个链表上，当标记完成后，遍历这个链表，
+ 把未被标记的节点一一删除即可。
+ lua中所有的string放在一张大的hash表中。它需要保证系统中不会有值相同的string被创建两份。所以string是被单独管理的，
+ 而串在GCObject的链表中。
 */
 #define CommonHeader	GCObject *next; lu_byte tt; lu_byte marked
 

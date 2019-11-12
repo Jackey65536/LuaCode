@@ -68,12 +68,18 @@ typedef struct CallInfo {
 ** `global state', shared by all threads of this state
 */
 typedef struct global_State {
+  /*
+   所有的string以stringtabled结构保存在stringtable strt域。string的值类型为TString，
+   它和其它GCObject一样，拥有CommonHeader，但需要注意，CommonHeader中的next域却和其它
+   类型的单向链表意义不同。它被挂接在stringtable这个hash表中。
+   */
   stringtable strt;  /* hash table for strings，存放所有的字符串 */
   lua_Alloc frealloc;  /* function to reallocate memory */
   void *ud;         /* auxiliary data to `frealloc' */
   lu_byte currentwhite;
   lu_byte gcstate;  /* state of garbage collector */
   int sweepstrgc;  /* position of sweep in `strt' */
+  /* 除string外的GCObject链表头在rootgc域中。初始化时，这个域被初始化为主线程。*/
   GCObject *rootgc;  /* list of all collectable objects */
   GCObject **sweepgc;  /* position of sweep in `rootgc' */
   GCObject *gray;  /* list of gray objects */
@@ -106,12 +112,17 @@ typedef struct global_State {
 
 /*
 ** `per thread' state
+** 表示lua vm的某种状态，也是一个类型为thread的GCObject。
 */
 struct lua_State {
   CommonHeader;
   lu_byte status;
   StkId top;  /* first free slot in the stack */
   StkId base;  /* base of current function */
+  /*
+   一个完整的lua虚拟机在运行时，可有多个lua_State，即多个thread。他们会共享一些数据。这些数据放在
+   global_State *l_G域中。其中自然也包括所有GCObject的链表。
+   */
   global_State *l_G;
   CallInfo *ci;  /* call info for current function */
   const Instruction *savedpc;  /* `savedpc' of current function */

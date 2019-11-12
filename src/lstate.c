@@ -179,6 +179,7 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   luaZ_initbuffer(L, &g->buff);
   g->panic = NULL;
   g->gcstate = GCSpause;
+  /* 初始化为主线程 */
   g->rootgc = obj2gco(L);
   g->sweepstrgc = 0;
   g->sweepgc = &g->rootgc;

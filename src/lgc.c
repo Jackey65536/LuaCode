@@ -137,7 +137,9 @@ static void marktmu (global_State *g) {
 
 
 /* move `dead' udata that need finalization to list `tmudata' */
-// 分离udata,将有__gc的udata放到tmudata链表中
+/*
+ 把所有带有gc方法的userdata挑出来，放到一个循环链表tmudata中。
+ */
 size_t luaC_separateudata (lua_State *L, int all) {
   global_State *g = G(L);
   size_t deadmem = 0;
@@ -614,6 +616,7 @@ static void atomic (lua_State *L) {
   g->grayagain = NULL;
   propagateall(g);
   udsize = luaC_separateudata(L, 0);  /* separate userdata to be finalized */
+  /* 需要调用gc方法的这些userdata在当个gc循环是不能被直接清除的。所以在mark环节的最后，会被重新mark位不可清除节点 */
   marktmu(g);  /* mark `preserved' userdata */
   udsize += propagateall(g);  /* remark, to propagate `preserveness' */
   // 一个原子的过程去mark弱表
@@ -795,7 +798,7 @@ void luaC_barrierback (lua_State *L, Table *t) {
   g->grayagain = o;
 }
 
-// 将某个对象指针加入GC链表中,同时置它的颜色为当前的白色
+// 每当一个新的GCObject被创建出来，都会被挂接在rootgc链表中,同时置它的颜色为当前的白色
 void luaC_link (lua_State *L, GCObject *o, lu_byte tt) {
   global_State *g = G(L);
   o->gch.next = g->rootgc;
@@ -804,7 +807,13 @@ void luaC_link (lua_State *L, GCObject *o, lu_byte tt) {
   o->gch.tt = tt;
 }
 
-// 这里需要问一下:upval和一般的对象有什么区别?为什么要单独一个函数来处理?
+/*
+ 也是挂接到rootgc链表的函数。
+ upvalue在C中类型为UpVal，也是一个GCObject，但这里被特殊处理。因为Lua的GC可以分步扫描。
+ 别的类型被新创建时，都可以直接作为一个白色节点（新节点）挂接在整个系统中。但upvalue确实对
+ 已有的对象的间接引用，不是新数据。一旦GC在mark的过程中（gc状态为GCSpropagate），则需要
+ 增加屏障luaC_barrier。
+ */
 void luaC_linkupval (lua_State *L, UpVal *uv) {
   global_State *g = G(L);
   GCObject *o = obj2gco(uv);
