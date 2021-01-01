@@ -59,7 +59,7 @@ int luaV_tostring (lua_State *L, StkId obj) {
 
 // ????????????
 static void traceexec (lua_State *L, const Instruction *pc) {
-  lu_byte mask = L->hookmask;
+  unsigned char mask = L->hookmask;
   const Instruction *oldpc = L->savedpc;
   L->savedpc = pc;
   if ((mask & LUA_MASKCOUNT) && L->hookcount == 0) {

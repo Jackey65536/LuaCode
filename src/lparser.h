@@ -51,8 +51,8 @@ typedef struct expdesc {
 
 
 typedef struct upvaldesc {
-  lu_byte k;
-  lu_byte info;
+  unsigned char k;
+  unsigned char info;
 } upvaldesc;
 
 
@@ -75,7 +75,7 @@ typedef struct FuncState {
   int nk;  /* number of elements in `k' */
   int np;  /* number of elements in `p' */
   short nlocvars;  /* number of elements in `locvars' */
-  lu_byte nactvar;  /* number of active local variables */
+  unsigned char nactvar;  /* number of active local variables */
   upvaldesc upvalues[LUAI_MAXUPVALUES];  /* upvalues */
   unsigned short actvar[LUAI_MAXVARS];  /* declared-variable stack */
 } FuncState;

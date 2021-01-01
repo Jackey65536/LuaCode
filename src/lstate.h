@@ -76,8 +76,8 @@ typedef struct global_State {
   stringtable strt;  /* hash table for strings，存放所有的字符串 */
   lua_Alloc frealloc;  /* function to reallocate memory */
   void *ud;         /* auxiliary data to `frealloc' */
-  lu_byte currentwhite;
-  lu_byte gcstate;  /* state of garbage collector */
+  unsigned char currentwhite;
+  unsigned char gcstate;  /* state of garbage collector */
   int sweepstrgc;  /* position of sweep in `strt' */
   /* 除string外的GCObject链表头在rootgc域中。初始化时，这个域被初始化为主线程。*/
   GCObject *rootgc;  /* list of all collectable objects */
@@ -116,7 +116,7 @@ typedef struct global_State {
 */
 struct lua_State {
   CommonHeader;
-  lu_byte status;
+  unsigned char status;
   StkId top;  /* first free slot in the stack */
   StkId base;  /* base of current function */
   /*
@@ -134,8 +134,8 @@ struct lua_State {
   int size_ci;  /* size of array `base_ci' */
   unsigned short nCcalls;  /* number of nested C calls */
   unsigned short baseCcalls;  /* nested C calls when resuming coroutine */
-  lu_byte hookmask;
-  lu_byte allowhook;
+  unsigned char hookmask;
+  unsigned char allowhook;
   int basehookcount;
   int hookcount;
   lua_Hook hook;

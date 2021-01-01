@@ -53,7 +53,7 @@ typedef union GCObject GCObject;
  lua中所有的string放在一张大的hash表中。它需要保证系统中不会有值相同的string被创建两份。所以string是被单独管理的，
  而串在GCObject的链表中。
 */
-#define CommonHeader	GCObject *next; lu_byte tt; lu_byte marked
+#define CommonHeader	GCObject *next; unsigned char tt; unsigned char marked
 
 
 /*
@@ -85,14 +85,15 @@ typedef union {
 ** Tagged Values
 ** 用于将Value和类型结合在一起
 */
-#define TValuefields	Value value; int tt
+// #define TValuefields	Value value; int tt
 
 /*
   统一表示所有在Lua虚拟机中需要保存的数据类型，Lua中的任何数据都可以通过该结构体表示
   Lua中以union + type的形式保存值
 */
 typedef struct lua_TValue {
-  TValuefields;
+  Value value; 
+  int tt;
 } TValue;   /* 比Value多了一个T，即类型标识 */
 
 
@@ -223,7 +224,7 @@ typedef union TString {
   struct {
     CommonHeader;
     /* 标识这个字符串是否是Lua虚拟机中的保留字符串。如果这个值为1，那么将不会再GC阶段被回收，而是一直保留在系统中。 */
-    lu_byte reserved; 
+    unsigned char reserved; 
     unsigned int hash; /* 字符串的散列值 */
     size_t len; /* 字符串长度 */
   } tsv;
@@ -274,10 +275,10 @@ typedef struct Proto {
   int linedefined;
   int lastlinedefined;
   GCObject *gclist;
-  lu_byte nups;  /* number of upvalues */
-  lu_byte numparams;
-  lu_byte is_vararg;
-  lu_byte maxstacksize;
+  unsigned char nups;  /* number of upvalues */
+  unsigned char numparams;
+  unsigned char is_vararg;
+  unsigned char maxstacksize;
 } Proto;
 
 
@@ -311,7 +312,7 @@ typedef struct UpVal {
 } UpVal;
 
 #define ClosureHeader \
-	CommonHeader; lu_byte isC; lu_byte nupvalues; GCObject *gclist; \
+	CommonHeader; unsigned char isC; unsigned char nupvalues; GCObject *gclist; \
 	struct Table *env
 
 typedef struct CClosure {
@@ -344,7 +345,8 @@ typedef union Closure {
 
 typedef union TKey {
   struct {
-    TValuefields;
+    Value value; 
+    int tt;
     struct Node *next;  /* for chaining */
   } nk;
   TValue tvk;
@@ -365,12 +367,12 @@ typedef struct Table {
     这样下一次查找时只需要比较这个bit就行了。
     每个元方法对应的bit定义在 ltm.h 文件中。
   */
-  lu_byte flags;  /* 1<<p means tagmethod(p) is not present */ 
+  unsigned char flags;  /* 1<<p means tagmethod(p) is not present */ 
   /*
     该表中以2为底的散列表大小的对数值。由此可知，散列表部分的大小一定是2的幂，
     即如果散列桶数组要扩展的话，也是以每次在原大小基础上乘以2的形式扩展。
   */
-  lu_byte lsizenode;  /* log2 of size of `node' array */
+  unsigned char lsizenode;  /* log2 of size of `node' array */
   struct Table *metatable; /* 存放该表的元表 */
   TValue *array;  /* 指向数组部分的指针 */
   Node *node; /* 指向该表的散列桶数组起始位置的指针 */

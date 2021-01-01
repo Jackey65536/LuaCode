@@ -24,7 +24,7 @@ typedef LUAI_MEM l_mem;
 
 
 /* chars used as small naturals (so that `char' is reserved for characters) */
-typedef unsigned char lu_byte;
+// typedef unsigned char lu_byte;
 
 
 #define MAX_SIZET	((size_t)(~(size_t)0)-2)
@@ -75,9 +75,9 @@ typedef LUAI_UACNUMBER l_uacNumber;
 #define cast(t, exp)	((t)(exp))
 #endif
 
-#define cast_byte(i)	cast(lu_byte, (i))
-#define cast_num(i)	cast(lua_Number, (i))
-#define cast_int(i)	cast(int, (i))
+#define cast_byte(i)	cast(unsigned char, (i))
+#define cast_num(i)	    cast(lua_Number, (i))
+#define cast_int(i)	    cast(int, (i))
 
 
 

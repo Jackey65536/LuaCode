@@ -525,7 +525,7 @@ static void GCTM (lua_State *L) {
   tm = fasttm(L, udata->uv.metatable, TM_GC);
   if (tm != NULL) {
 	// 调用GC方法
-    lu_byte oldah = L->allowhook;
+    unsigned char oldah = L->allowhook;
     lu_mem oldt = g->GCthreshold;
     L->allowhook = 0;  /* stop debug hooks during GC tag method */
     g->GCthreshold = 2*g->totalbytes;  /* avoid GC steps */
@@ -799,7 +799,7 @@ void luaC_barrierback (lua_State *L, Table *t) {
 }
 
 // 每当一个新的GCObject被创建出来，都会被挂接在rootgc链表中,同时置它的颜色为当前的白色
-void luaC_link (lua_State *L, GCObject *o, lu_byte tt) {
+void luaC_link (lua_State *L, GCObject *o, unsigned char tt) {
   global_State *g = G(L);
   o->gch.next = g->rootgc;
   g->rootgc = o;

@@ -41,9 +41,9 @@
 typedef struct BlockCnt {
   struct BlockCnt *previous;  /* chain */
   int breaklist;  /* list of jumps out of this loop */
-  lu_byte nactvar;  /* # active locals outside the breakable structure */
-  lu_byte upval;  /* true if some variable in the block is an upvalue */
-  lu_byte isbreakable;  /* true if `block' is a loop */
+  unsigned char nactvar;  /* # active locals outside the breakable structure */
+  unsigned char upval;  /* true if some variable in the block is an upvalue */
+  unsigned char isbreakable;  /* true if `block' is a loop */
 } BlockCnt;
 
 
@@ -316,7 +316,7 @@ static void enterlevel (LexState *ls) {
 #define leavelevel(ls)	((ls)->L->nCcalls--)
 
 
-static void enterblock (FuncState *fs, BlockCnt *bl, lu_byte isbreakable) {
+static void enterblock (FuncState *fs, BlockCnt *bl, unsigned char isbreakable) {
   bl->breaklist = NO_JUMP;
   bl->isbreakable = isbreakable;
   bl->nactvar = fs->nactvar;
@@ -874,8 +874,8 @@ static BinOpr getbinopr (int op) {
 
 // 这里用数字太不好了
 static const struct {
-  lu_byte left;  /* left priority for each binary operator */
-  lu_byte right; /* right priority */
+  unsigned char left;  /* left priority for each binary operator */
+  unsigned char right; /* right priority */
 } priority[] = {  /* ORDER OPR */
    {6, 6}, {6, 6}, {7, 7}, {7, 7}, {7, 7},  /* `+' `-' `/' `%' */
    {10, 9}, {5, 4},                 /* power and concat (right associative) */

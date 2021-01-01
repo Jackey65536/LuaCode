@@ -34,7 +34,7 @@
 ** ~：按位取反
 ** ^：按位异或
 */
-#define resetbits(x,m)	((x) &= cast(lu_byte, ~(m)))
+#define resetbits(x,m)	((x) &= cast(unsigned char, ~(m)))
 #define setbits(x,m)	((x) |= (m))
 #define testbits(x,m)	((x) & (m))
 #define bitmask(b)	(1<<(b)) /* 2^b */
@@ -111,7 +111,7 @@
 #define valiswhite(x)	(iscollectable(x) && iswhite(gcvalue(x)))
 
 // 返回当前的白色
-#define luaC_white(g)	cast(lu_byte, (g)->currentwhite & WHITEBITS)
+#define luaC_white(g)	cast(unsigned char, (g)->currentwhite & WHITEBITS)
 
 // 如果大于阙值,就启动一次GC
 #define luaC_checkGC(L) { \
@@ -139,7 +139,7 @@ LUAI_FUNC void luaC_callGCTM (lua_State *L);
 LUAI_FUNC void luaC_freeall (lua_State *L);
 LUAI_FUNC void luaC_step (lua_State *L);
 LUAI_FUNC void luaC_fullgc (lua_State *L);
-LUAI_FUNC void luaC_link (lua_State *L, GCObject *o, lu_byte tt);
+LUAI_FUNC void luaC_link (lua_State *L, GCObject *o, unsigned char tt);
 LUAI_FUNC void luaC_linkupval (lua_State *L, UpVal *uv);
 LUAI_FUNC void luaC_barrierf (lua_State *L, GCObject *o, GCObject *v);
 LUAI_FUNC void luaC_barrierback (lua_State *L, Table *t);
