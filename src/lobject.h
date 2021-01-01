@@ -53,14 +53,16 @@ typedef union GCObject GCObject;
  lua中所有的string放在一张大的hash表中。它需要保证系统中不会有值相同的string被创建两份。所以string是被单独管理的，
  而串在GCObject的链表中。
 */
-#define CommonHeader	GCObject *next; unsigned char tt; unsigned char marked
+// #define CommonHeader	GCObject *next; unsigned char tt; unsigned char marked
 
 
 /*
 ** Common header in struct form
 */
 typedef struct GCheader {
-  CommonHeader;
+  GCObject *next; 
+  unsigned char tt; 
+  unsigned char marked;
 } GCheader;
 
 
@@ -222,7 +224,9 @@ typedef TValue *StkId;  /* index to stack elements */
 typedef union TString {
   L_Umaxalign dummy;  /* ensures maximum alignment for strings */
   struct {
-    CommonHeader;
+    GCObject *next; 
+    unsigned char tt; 
+    unsigned char marked;
     /* 标识这个字符串是否是Lua虚拟机中的保留字符串。如果这个值为1，那么将不会再GC阶段被回收，而是一直保留在系统中。 */
     unsigned char reserved; 
     unsigned int hash; /* 字符串的散列值 */
@@ -239,7 +243,9 @@ typedef union TString {
 typedef union Udata {
   L_Umaxalign dummy;  /* ensures maximum alignment for `local' udata */
   struct {
-    CommonHeader;
+    GCObject *next; 
+    unsigned char tt; 
+    unsigned char marked;
     struct Table *metatable;
     struct Table *env;
     size_t len;
@@ -254,7 +260,9 @@ typedef union Udata {
 */
 // 存放函数原型的数据结构
 typedef struct Proto {
-  CommonHeader;
+  GCObject *next; 
+  unsigned char tt; 
+  unsigned char marked;
   TValue *k;  /* constants used by the function */
   // 函数体对应的虚拟机指令
   Instruction *code;
@@ -298,7 +306,9 @@ typedef struct LocVar {
 
 /* 外部局部变量 */
 typedef struct UpVal {
-  CommonHeader;
+  GCObject *next; 
+  unsigned char tt; 
+  unsigned char marked;
   TValue *v;  /* points to stack or to its own value */
   union {
 	// 当这个upval被close时,保存upval的值,后面可能还会被引用到
@@ -312,7 +322,7 @@ typedef struct UpVal {
 } UpVal;
 
 #define ClosureHeader \
-	CommonHeader; unsigned char isC; unsigned char nupvalues; GCObject *gclist; \
+	GCObject *next; unsigned char tt; unsigned char marked; unsigned char isC; unsigned char nupvalues; GCObject *gclist; \
 	struct Table *env
 
 typedef struct CClosure {
@@ -327,7 +337,7 @@ typedef struct LClosure {
   UpVal *upvals[1];
 } LClosure;
 
-/* 闭包 */
+// 闭包
 typedef union Closure {
   CClosure c;
   LClosure l;
@@ -360,7 +370,9 @@ typedef struct Node {
 
 
 typedef struct Table {
-  CommonHeader;
+  GCObject *next; 
+  unsigned char tt; 
+  unsigned char marked;
   /*
     用于表示这个表中提供了那些元方法。最开始这个flags是空的，也就是0，
     当查找一次之后，如果该表中存在某个元方法，那么将该元方法对应的flag bit置位1，

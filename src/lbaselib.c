@@ -186,7 +186,7 @@ static int luaB_rawset (lua_State *L) {
 
 
 static int luaB_gcinfo (lua_State *L) {
-  lua_pushinteger(L, lua_getgccount(L));
+  lua_pushinteger(L, lua_gc(L, LUA_GCCOUNT, 0));
   return 1;
 }
 

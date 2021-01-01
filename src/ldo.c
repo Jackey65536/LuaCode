@@ -123,13 +123,15 @@ int luaD_rawrunprotected (lua_State *L, Pfunc f, void *ud) {
 
 /* }====================================================== */
 
-
+// 重新分配栈之后，可能L->stack和oldstack为不同的地址，所以要矫正依赖于栈地址的其他数据
 static void correctstack (lua_State *L, TValue *oldstack) {
   CallInfo *ci;
   GCObject *up;
+  // 矫正栈顶
   L->top = (L->top - oldstack) + L->stack;
   for (up = L->openupval; up != NULL; up = up->gch.next)
     gco2uv(up)->v = (gco2uv(up)->v - oldstack) + L->stack;
+  // 调用栈帧
   for (ci = L->base_ci; ci <= L->ci; ci++) {
     ci->top = (ci->top - oldstack) + L->stack;
     ci->base = (ci->base - oldstack) + L->stack;
@@ -138,7 +140,7 @@ static void correctstack (lua_State *L, TValue *oldstack) {
   L->base = (L->base - oldstack) + L->stack;
 }
 
-
+// 重新分配栈空间
 void luaD_reallocstack (lua_State *L, int newsize) {
   TValue *oldstack = L->stack;
   int realsize = newsize + 1 + EXTRA_STACK;
@@ -146,6 +148,7 @@ void luaD_reallocstack (lua_State *L, int newsize) {
   luaM_reallocvector(L, L->stack, L->stacksize, realsize, TValue);
   L->stacksize = realsize;
   L->stack_last = L->stack+newsize;
+  // 分配完之后，可能L->stack和oldstack为不同的地址，所以要矫正依赖于栈地址的其他数据
   correctstack(L, oldstack);
 }
 

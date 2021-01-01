@@ -191,7 +191,7 @@ int mainc(int argc, char* argv[])
  int i=doargs(argc,argv);
  argc-=i; argv+=i;
  if (argc<=0) usage("no input files given");
- L=lua_open();
+ L=luaL_newstate();
  if (L==NULL) fatal("not enough memory for state");
  s.argc=argc;
  s.argv=argv;

@@ -107,7 +107,7 @@ int main(){
   char *file = NULL;
   file = "my.lua";
 
-  lua_State *L = lua_open();
+  lua_State *L = luaL_newstate();
   luaL_openlibs(L);
   luaopen_testuserdata(L);
   if (luaL_dofile(L, file)) {

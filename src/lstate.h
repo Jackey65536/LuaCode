@@ -115,7 +115,9 @@ typedef struct global_State {
 ** 表示lua vm的某种状态，也是一个类型为thread的GCObject。
 */
 struct lua_State {
-  CommonHeader;
+  GCObject *next; 
+  unsigned char tt; 
+  unsigned char marked;
   unsigned char status;
   StkId top;  /* first free slot in the stack */
   StkId base;  /* base of current function */

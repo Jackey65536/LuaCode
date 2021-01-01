@@ -159,8 +159,6 @@ LUA_API lua_State *lua_newthread (lua_State *L) {
 /*
 ** basic stack manipulation
 */
-
-
 LUA_API int lua_gettop (lua_State *L) {
   return cast_int(L->top - L->base);
 }
