@@ -51,6 +51,7 @@ typedef struct lua_State lua_State;
 
 /*
  ** lua_CFunction pf; => int (*pf) (lua_State *L)
+ ** C函数的类型
  */
 typedef int (*lua_CFunction) (lua_State *L);
 
@@ -104,7 +105,7 @@ typedef void * (*lua_Alloc) (void *ud, void *ptr, size_t osize, size_t nsize);
 typedef LUA_NUMBER lua_Number;
 
 
-/* type for integer functions */
+/* Lua 中的整数类型。 */
 typedef LUA_INTEGER lua_Integer;
 
 

@@ -94,10 +94,13 @@ void luaA_pushobject (lua_State *L, const TValue *o) {
   api_incr_top(L);
 }
 
-
+/**
+ * 确保堆栈上至少有size个额外空位。
+*/
 LUA_API int lua_checkstack (lua_State *L, int size) {
   int res = 1;
   lua_lock(L);
+  // 如果不能把堆栈扩展到相应的尺寸，函数返回0
   if (size > LUAI_MAXCSTACK || (L->top - L->base + size) > LUAI_MAXCSTACK)
     res = 0;  /* stack overflow */
   else if (size > 0) {
@@ -141,7 +144,11 @@ LUA_API lua_CFunction lua_atpanic (lua_State *L, lua_CFunction panicf) {
   return old;
 }
 
-
+/**
+ * 创建一条新线程，并将其压栈，并返回维护这个线程的lua_State指针。
+ * 这个函数返回的新线程共享原线程的全局环境，但是它有独立的运行栈。没有显式的函数可以用来关闭或销毁掉一个线程。
+ * 线程跟其他lua对象一样是垃圾收集的条目之一。
+*/
 LUA_API lua_State *lua_newthread (lua_State *L) {
   lua_State *L1;
   lua_lock(L);
@@ -157,7 +164,7 @@ LUA_API lua_State *lua_newthread (lua_State *L) {
 
 
 /*
-** basic stack manipulation
+** 返回栈大小，即函数的参数个数
 */
 LUA_API int lua_gettop (lua_State *L) {
   return cast_int(L->top - L->base);
@@ -192,7 +199,10 @@ LUA_API void lua_remove (lua_State *L, int idx) {
   lua_unlock(L);
 }
 
-
+/**
+ * 把栈顶元素移动到指定的有效索引处，一次移动这个索引之上的元素。
+ * 不要用伪索引来调用这个函数，因为伪索引没有真正只想栈上的位置。
+*/
 LUA_API void lua_insert (lua_State *L, int idx) {
   StkId p;
   StkId q;
@@ -588,7 +598,12 @@ LUA_API void lua_rawgeti (lua_State *L, int idx, int n) {
   lua_unlock(L);
 }
 
-
+/**
+ * 创建一张新表压栈。
+ * narray: 建议这张表作为序列使用时会有多少个元素
+ * nrec: 建议这张表可能拥有多少序列之外的元素
+ * Lua会使用参数的建议来预分配这张表
+*/
 LUA_API void lua_createtable (lua_State *L, int narray, int nrec) {
   lua_lock(L);
   luaC_checkGC(L);
@@ -879,7 +894,10 @@ LUA_API int lua_cpcall (lua_State *L, lua_CFunction func, void *ud) {
   return status;
 }
 
-
+/**
+ * 加载一段lua代码块，但不运行它。
+ * 如果没有错误，lua_load把一个编译好的代码块作为一个lua函数压到栈顶。否则，压入错误消息。
+*/
 LUA_API int lua_load (lua_State *L, lua_Reader reader, void *data,
                       const char *chunkname) {
   ZIO z;
@@ -892,7 +910,9 @@ LUA_API int lua_load (lua_State *L, lua_Reader reader, void *data,
   return status;
 }
 
-
+/**
+ * 把函数导出成二进制代码块。
+*/
 LUA_API int lua_dump (lua_State *L, lua_Writer writer, void *data) {
   int status;
   TValue *o;
@@ -914,9 +934,8 @@ LUA_API int  lua_status (lua_State *L) {
 
 
 /*
-** Garbage-collection function
+** 控制垃圾收集器。
 */
-
 LUA_API int lua_gc (lua_State *L, int what, int data) {
   int res = 0;
   global_State *g;
@@ -998,7 +1017,10 @@ LUA_API int lua_error (lua_State *L) {
   return 0;  /* to avoid warnings */
 }
 
-
+/**
+ * 从栈顶弹出一个键， 然后把索引指定的表中的一个键值对压栈 （弹出的键之后的 “下一” 对）。 
+ * 如果表中以无更多元素， 那么 lua_next 将返回 0 （什么也不压栈）。
+*/
 LUA_API int lua_next (lua_State *L, int idx) {
   StkId t;
   int more;
@@ -1015,7 +1037,9 @@ LUA_API int lua_next (lua_State *L, int idx) {
   return more;
 }
 
-
+/**
+ * 连接栈顶的n个值，然后将这些值出栈，并把结果放在栈顶。
+*/
 LUA_API void lua_concat (lua_State *L, int n) {
   lua_lock(L);
   api_checknelems(L, n);
@@ -1032,7 +1056,10 @@ LUA_API void lua_concat (lua_State *L, int n) {
   lua_unlock(L);
 }
 
-
+/**
+ * 返回给定状态机的内存分配器函数。
+ * 如果ud不是null，lua把设置内存分配函数时设置的那个指针置入*ud
+*/
 LUA_API lua_Alloc lua_getallocf (lua_State *L, void **ud) {
   lua_Alloc f;
   lua_lock(L);
@@ -1050,12 +1077,14 @@ LUA_API void lua_setallocf (lua_State *L, lua_Alloc f, void *ud) {
   lua_unlock(L);
 }
 
-
+/**
+ * 分配一块指定大小的内存块，把内存地址作为一个完全用户数据压栈，并返回这个地址。
+ * 宿主程序可以随意使用这块内存。
+*/
 LUA_API void *lua_newuserdata (lua_State *L, size_t size) {
-  Udata *u;
   lua_lock(L);
   luaC_checkGC(L);
-  u = luaS_newudata(L, size, getcurrenv(L));
+  Udata* u = luaS_newudata(L, size, getcurrenv(L));
   setuvalue(L, L->top, u);
   api_incr_top(L);
   lua_unlock(L);

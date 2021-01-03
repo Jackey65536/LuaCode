@@ -151,7 +151,11 @@ void luaE_freethread (lua_State *L, lua_State *L1) {
   luaM_freemem(L, fromstate(L1), state_size(lua_State));
 }
 
-
+/**
+ * 创建一个运行在新的独立的状态机中的线程。如果无法创建线程或状态机（内存有限）则返回NULL。
+ * f：分配器函数；Lua将通过这个函数作状态机内所有的内存分配操作。
+ * ud：这个指针在每次调用分配器时被转入
+*/
 LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   int i;
   lua_State *L;
@@ -208,7 +212,9 @@ static void callallgcTM (lua_State *L, void *ud) {
   luaC_callGCTM(L);  /* call GC metamethods for all udata */
 }
 
-
+/**
+ * 销毁指定Lua状态机中的所有对象（如果有垃圾收集相关方法的话，会调用他们），并且释放状态机中试用的所有动态内存。
+*/
 LUA_API void lua_close (lua_State *L) {
   L = G(L)->mainthread;  /* only the main thread can be closed */
   lua_lock(L);

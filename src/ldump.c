@@ -150,6 +150,7 @@ static void DumpHeader(DumpState* D)
 
 /*
 ** dump Lua function as precompiled chunk
+** strip为真，二进制代码块将不包含该函数的调试信息
 */
 int luaU_dump (lua_State* L, const Proto* f, lua_Writer w, void* data, int strip)
 {

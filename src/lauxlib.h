@@ -8,7 +8,17 @@
 #ifndef lauxlib_h
 #define lauxlib_h
 
-
+/**
+ * stddef.h头文件定义了各种变量类型和宏。这些定义中的大部分也出现杂其它头文件中。
+ * 变量类型
+ *  ptrdiff_t: 这是有符号整数类型，它是两个指针相减的结果
+ *  size_t: 这是无符号整数类型，它是siezof关键字的结果
+ *  wchar_t: 这是一个宽字符常量大小的整数类型
+ * 宏
+ *  NULL：这个宏是一个空指针常量的值
+ *  offsetof(type, member-designator)：这会生成一个类型为size_t的整型常量，它是一个结构成员相对于
+ * 结构开头的字节偏移量。成员是由 member-designator 给定，结构的名称是在 type 中给定的。
+*/
 #include <stddef.h>
 #include <stdio.h>
 
