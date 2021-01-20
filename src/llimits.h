@@ -105,7 +105,9 @@ typedef lu_int32 Instruction;
 #define LUA_MINBUFFER	32
 #endif
 
-
+/* 
+ ** lua 的多线程并没有实现，如果想实现多线程，需要重新定义 lua_lock 与 lua_unlock 
+ */
 #ifndef lua_lock
 #define lua_lock(L)     ((void) 0) 
 #define lua_unlock(L)   ((void) 0)
